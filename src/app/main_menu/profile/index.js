@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect,useState } from 'react';
 import { View, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 // import { useNavigation } from '@react-navigation/native';
@@ -6,13 +6,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function Profile() {
-  // const navigation=useNavigation()
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  
+  const getNameAndEmail = async() => {
+    setName(await AsyncStorage.getItem('displayName'));
+    setEmail(await AsyncStorage.getItem('email'));
+  };
+
   const handleSignOut = async() => {
     await AsyncStorage.removeItem('uid');
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('displayName');
     await AsyncStorage.removeItem('email');
   };
+
+  useEffect(()=>{
+    getNameAndEmail()
+  },[])
 
   return (
     <View className='flex-1 justify-center items-center bg-white p-4'>
@@ -21,19 +32,13 @@ export default function Profile() {
           Name:
         </Text>
         <Text className='text-lg mb-4  border-b-[1px]'>
-          John Doe
+          {name}
         </Text>
         <Text className='text-lg font-bold mb-2 '>
           Email:
         </Text>
         <Text className='text-lg mb-4 border-b-[1px]'>
-          johndoe@example.com
-        </Text>
-        <Text className='text-lg font-bold mb-2'>
-          Phone number:
-        </Text>
-        <Text className='text-lg mb-4 border-b-[1px]'>
-          +1234567890
+          {email}
         </Text>
         <Button
           mode="contained"

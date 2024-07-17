@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from './splash';
 import MainMenu from './main_menu';
+import MakeOrJoin from './main_menu/dashboard/makeOrJoin';
+import CatatanKeuangan from './main_menu/dashboard/catatan_keuangan';
+import HitungHPP from './main_menu/dashboard/hitung_hpp';
 import Register from './auth/register';
 import Login from './auth/login';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +19,10 @@ const InsideStack = () => {
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name='main_menu' component={MainMenu} />
+      <Stack.Screen name='make_or_join' component={MakeOrJoin} />
+      <Stack.Screen name='catatan_keuangan' component={CatatanKeuangan} />
+      <Stack.Screen name='hitung_hpp' component={HitungHPP} />
+
     </Stack.Navigator>
   );
 };
