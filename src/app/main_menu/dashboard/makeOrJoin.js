@@ -6,7 +6,7 @@ import useGlobalStore from '../../../config/store/global';
 import { useNavigation ,useFocusEffect } from '@react-navigation/native';
 
 export default function ProjectPage() {
-  const {jOrN,setJOrN,setProjectName,setProjectCode}=useGlobalStore()
+  const {jOrN,setJOrN,setProjectName,setProjectCode,type}=useGlobalStore()
   const navigation=useNavigation()
   const [text, setText] = useState('');
   const [inputValue, setInputValue] = useState('');
@@ -27,6 +27,7 @@ export default function ProjectPage() {
     // Handle submit logic here
     // console.log('Submitted with input:', inputValue);
     jOrN=='new'?setProjectName(inputValue):setProjectCode(inputValue)
+    type=='HPP'?navigation.replace('catatan_keuangan'):navigation.replace('hitung_hpp')
   };
 
   useFocusEffect(
