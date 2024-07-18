@@ -144,6 +144,7 @@ export default function HitungHPP() {
             <DataTable.Cell style={{ justifyContent: 'center', alignItems: 'center' }} numeric>
               {editableRowId === row.id ? (
                 <TextInput
+                  keyboardType="numeric"
                   value={String(editedRow.jumlahBahan)}
                   onChangeText={(text) => handleChange('jumlahBahan', Number(text))}
                   className="w-full text-center p-2 border border-gray-300 rounded"
@@ -167,6 +168,7 @@ export default function HitungHPP() {
               {editableRowId === row.id ? (
                 <TextInput
                   value={String(editedRow.hargaBahan)}
+                  keyboardType="numeric"
                   onChangeText={(text) => handleChange('hargaBahan', Number(text))}
                   className="w-full text-center p-2 border border-gray-300 rounded"
                 />
