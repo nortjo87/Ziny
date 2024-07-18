@@ -4,29 +4,62 @@ import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useGlobalStore from '../../../config/store/global';
 import { useNavigation ,useFocusEffect } from '@react-navigation/native';
+import { db, doc, setDoc } from './../../../config/services/firebaseConfig';
+
+
+function uniqueValue() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < 5; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+
 
 export default function ProjectPage() {
-  const {jOrN,setJOrN,setProjectName,setProjectCode,type}=useGlobalStore()
+  const {jOrN,setJOrN,setProjectName,setProjectCode,type,uid,projectCode}=useGlobalStore()
   const navigation=useNavigation()
   const [text, setText] = useState('');
   const [inputValue, setInputValue] = useState('');
 
+  const addData = async () => {
+    const namaBahan=[]
+    const jumlahBahan=[]
+    const satuanBahan=[]
+    const hargaBahan=[]
+
+    try {
+      const docRef = doc(db, type=='HPP'?'projectNote':'projectHPP',projectCode );
+      await setDoc(docRef, { namaBahan, jumlahBahan, satuanBahan, hargaBahan });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
   const handleNewProject = () => {
     setText('Input Name Project');
     setJOrN('new')
-    setProjectName(inputValue)
   };
 
   const handleJoinProject = () => {
     setText('Input Code Project');
     setJOrN('join')
-    setProjectCode(inputValue)
+  };
+
+  const handleInputChange = (val) => {
+    setInputValue(val);
+    setProjectCode(uid+uniqueValue()) 
+    console.log(projectCode)
   };
 
   const handleSubmit = () => {
     // Handle submit logic here
     // console.log('Submitted with input:', inputValue);
-    jOrN=='new'?setProjectName(inputValue):setProjectCode(inputValue)
+    addData()
+    setProjectName(inputValue)
     type=='HPP'?navigation.replace('catatan_keuangan'):navigation.replace('hitung_hpp')
   };
 
@@ -88,7 +121,7 @@ export default function ProjectPage() {
           className={`w-64 mb-4 p-2 bg-white text-black rounded border-b-[1px] border-primary ${jOrN?'':'hidden'}`}
           placeholder="Enter value"
           value={inputValue}
-          onChangeText={setInputValue}
+          onChangeText={handleInputChange}
         />
 
         <Button

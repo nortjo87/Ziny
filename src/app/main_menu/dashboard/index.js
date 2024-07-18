@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text , Image} from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import imagesImg from './../../../assets/img'
 import { useNavigation } from '@react-navigation/native';
 import useGlobalStore from '../../../config/store/global';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Dashboard() {
-  const {setType}=useGlobalStore()
+  const {setType,setUid}=useGlobalStore()
   const navigation = useNavigation();
+
+  const getUid = async()=>{
+    setUid(await AsyncStorage.getItem('uid'))
+  }
 
   function handleClickHitungHPP(){
     navigation.replace('make_or_join')
@@ -18,6 +23,10 @@ export default function Dashboard() {
     navigation.replace('make_or_join')
     setType('Note')
   }
+
+  useEffect(()=>{
+    getUid()
+  },[])
   
   return (
     <View className='flex-1 justify-center items-center bg-foreground p-4'>
