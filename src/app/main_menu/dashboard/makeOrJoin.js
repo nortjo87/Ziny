@@ -30,10 +30,17 @@ export default function ProjectPage() {
     const jumlahBahan=[]
     const satuanBahan=[]
     const hargaBahan=[]
+    const tanggal=[]
+    const namaKebutuhan=[]
+    const besarKebutuhan=[]
 
     try {
       const docRef = doc(db, type=='HPP'?'projectNote':'projectHPP',projectCode );
-      await setDoc(docRef, { namaBahan, jumlahBahan, satuanBahan, hargaBahan });
+      if(type==='HPP'){
+        await setDoc(docRef, { tanggal, namaKebutuhan, besarKebutuhan });
+      }else{
+        await setDoc(docRef, { namaBahan, jumlahBahan, satuanBahan, hargaBahan });
+      }
     } catch (e) {
       console.error("Error adding document: ", e);
     }

@@ -13,6 +13,7 @@
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/native": "^6.1.17",
     "@types/react": "~18.2.79",
+    "date-fns": "^3.6.0",
     "expo": "~51.0.21",
     "expo-constants": "~16.0.2",
     "expo-linking": "~6.3.1",

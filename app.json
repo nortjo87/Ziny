@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.nortjo87.Ziny"
     },
     "scheme": "ziny",
     "web": {
@@ -29,6 +30,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "97957485-262d-4a67-a57c-1774ff4ca49b"
+      }
+    }
   }
 }
