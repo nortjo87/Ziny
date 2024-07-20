@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { format, parse, isValid, compareAsc } from 'date-fns';
 import { db, doc, setDoc, getDoc } from './../../../../config/services/firebaseConfig';
 import useGlobalStore from '../../../../config/store/global';
+import PieChart from 'react-native-pie-chart'
 
 export default function CatatanKeuangan() {
   const [tanggal, setTanggal] = useState([]);
@@ -204,14 +205,29 @@ export default function CatatanKeuangan() {
     }
   };
 
+  const handleDetail=(data,month)=>{
+    data
+      .filter((row) => `${row.bulan}/${row.tahun}` === month)
+      .map((row) => (console.log(row)))
+  }
+
   return (
     <Provider>
       <SafeAreaView className="flex-1 p-4 bg-foreground">
         <Text className="text-lg font-bold mb-4 text-primary">Catatan Keuangan</Text>
-        <View className='bg-white p-3 mb-2 rounded-xl border-primarydisable border-[1px]'>
-          <Text className=" text-green-600">Pemasukan: {pemasukanAll}</Text>
-          <Text className=" text-red-600">Pengeluaran: {pengeluaranAll}</Text>
-          <Text className={`${saldoAll<0?'text-red-600':'text-green-600'} font-semibold text-xl`}>Saldo: {saldoAll}</Text>
+        <View className='justify-between items-center pl-3 pr-10 flex-row bg-white py-3 mb-2 rounded-xl border-primarydisable border-[1px]'>
+          <View>
+            <Text className=" text-green-600">Pemasukan: {pemasukanAll}</Text>
+            <Text className=" text-red-600">Pengeluaran: {pengeluaranAll}</Text>
+            <Text className={`${saldoAll<0?'text-red-600':'text-green-600'} font-semibold text-xl`}>Saldo: {saldoAll}</Text>
+          </View>
+          <PieChart
+            widthAndHeight={50}
+            series={pemasukanAll===0?[100,100]:[pemasukanAll,(-1)*pengeluaranAll]}
+            sliceColor={['#14a82d', '#ff0000']}
+            coverRadius={0.45}
+            coverFill={'#FFF'}
+          />
         </View>
         {Object.keys(
           data.reduce((acc, row) => {
@@ -224,7 +240,10 @@ export default function CatatanKeuangan() {
           }, {})
         ).map((month) => (
           <View key={month} className="mb-6">
-            <Text className="text-xl font-bold mb-2">{month}</Text>
+            <View className='flex-row justify-between items-center'>
+              <Text className="text-xl font-bold mb-2">{month}</Text>
+              <Text onPress={()=>handleDetail(data,month)} className="text-blue-600  mb-2">Detail</Text>
+            </View>
             <DataTable className="w-full bg-white rounded-xl">
               <DataTable.Header className="bg-gray-100 rounded-t-xl">
                 <DataTable.Title style={{ justifyContent: 'center' }}>Tanggal</DataTable.Title>
