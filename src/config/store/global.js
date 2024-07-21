@@ -7,6 +7,9 @@ const useGlobalStore = create((set) => ({
   jOrN: '',// jOrN value is 'new' or 'join'
   projectName: '',
   projectCode: '',
+  // projectNameList: [],
+  // projectCodeList: [],
+  // projectTypeList:[],
 
 
 
@@ -15,6 +18,10 @@ const useGlobalStore = create((set) => ({
   setUid: (uid) => set(() => ({ uid })),
   setProjectName: (projectName) => set(() => ({ projectName })),
   setProjectCode: (projectCode) => set(() => ({ projectCode })),
+  // setProjectNameList: (projectNameList) => set(() => ({ projectNameList })),
+  // setProjectCodeList: (projectCodeList) => set(() => ({ projectCodeList })),
+  // setProjectTypeList: (projectTypeList) => set(() => ({ projectTypeList })),
+
 
 
 }));

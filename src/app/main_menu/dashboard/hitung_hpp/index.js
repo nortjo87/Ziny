@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Modal, ScrollView } from 'react-native';
+import { View, Text, TextInput, Modal, ScrollView ,BackHandler} from 'react-native';
 import { Button, DataTable, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db, doc, setDoc, getDoc } from './../../../../config/services/firebaseConfig';
 import useGlobalStore from '../../../../config/store/global';
+import { useNavigation ,useFocusEffect } from '@react-navigation/native';
+
 
 
 export default function HitungHPP() {
-  const {projectCode}=useGlobalStore()
+  const navigation=useNavigation()
+  const {projectCode,setJOrN,setProjectCode,}=useGlobalStore()
   const [namaBahan, setNamaBahan] = useState([]);
   const [jumlahBahan, setJumlahBahan] = useState([]);
   const [satuanBahan, setSatuanBahan] = useState([]);
@@ -29,7 +32,21 @@ export default function HitungHPP() {
   const [profitPCS,setProfitPCS]=useState(0)
   const [modalPCS,setModalPCS]=useState(0)
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.replace('main_menu');
+        setJOrN('')
+        setProjectCode('')
+        return true;
+      };
 
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
 
 
 

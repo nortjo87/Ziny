@@ -15,6 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
+
   const signIn=async()=>{
     try{
       const response = await signInWithEmailAndPassword(auth, email, password);
@@ -28,12 +29,6 @@ export default function Login() {
       await AsyncStorage.setItem('email', user.email);
 
 
-
-      // const a=await AsyncStorage.getItem('uid');
-      // const b=await AsyncStorage.getItem('accessToken');
-  
-      // console.log('user id',a)
-      // console.log('user id',b)
     }catch(er){
       alert(er.message)
     }

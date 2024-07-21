@@ -1,14 +1,27 @@
-import React from 'react';
+import React ,{useEffect}from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Provider as PaperProvider } from 'react-native-paper';
 import Dashboard from './dashboard';
 import Profile from './profile';
 import ProjectList from './project_list'; // Import the new ProjectList component
 import { IconButton } from 'react-native-paper';
+import useGlobalStore from '../../config/store/global';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  const {setUid}=useGlobalStore()
+
+  const getUid = async()=>{
+    setUid(await AsyncStorage.getItem('uid'))
+  }
+
+  useEffect(()=>{
+    getUid()
+  },[])
+
   return (
     <PaperProvider>
       <Tab.Navigator

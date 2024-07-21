@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useGlobalStore from '../../../config/store/global';
 import { useNavigation ,useFocusEffect } from '@react-navigation/native';
-import { db, doc, setDoc } from './../../../config/services/firebaseConfig';
+import { db, doc, setDoc,getDoc } from './../../../config/services/firebaseConfig';
 
 
 function uniqueValue() {
@@ -25,7 +25,41 @@ export default function ProjectPage() {
   const [text, setText] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  const addData = async () => {
+  const joinProjectFunction =async()=>{
+    setProjectCode(inputValue) 
+    try{
+      const docRefUser = doc(db, 'users',uid );
+      const docSnap = await getDoc(docRefUser);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        // Ambil data yang ada dari Firestore
+        const projectNameList = data.projectNameList || [];
+        const projectCodeList = data.projectCodeList || [];
+        const projectTypeList = data.projectTypeList || [];
+    
+        // Tambahkan data baru ke dalam array
+        projectNameList.push('join project');
+        projectCodeList.push(inputValue);
+        projectTypeList.push(type);
+    
+        // Simpan data yang telah diperbarui kembali ke Firestore
+        await setDoc(docRefUser, {
+          projectNameList,
+          projectCodeList,
+          projectTypeList})
+        } else {
+          const projectNameList=['join project'];
+          const projectCodeList=[inputValue];
+          const projectTypeList=[type];
+          await setDoc(docRefUser, { projectNameList, projectCodeList, projectTypeList });
+        }
+    }catch(e){
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  const newProjectFunction = async () => {
     const namaBahan=[]
     const jumlahBahan=[]
     const satuanBahan=[]
@@ -34,12 +68,40 @@ export default function ProjectPage() {
     const namaKebutuhan=[]
     const besarKebutuhan=[]
 
+    setProjectName(inputValue)
+
     try {
-      const docRef = doc(db, type=='HPP'?'projectNote':'projectHPP',projectCode );
+      const docRefProject = doc(db, type=='HPP'?'projectHPP':'projectNote',projectCode );
+      const docRefUser = doc(db, 'users',uid );
+      const docSnap = await getDoc(docRefUser);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        // Ambil data yang ada dari Firestore
+        const projectNameList = data.projectNameList || [];
+        const projectCodeList = data.projectCodeList || [];
+        const projectTypeList = data.projectTypeList || [];
+    
+        // Tambahkan data baru ke dalam array
+        projectNameList.push(inputValue);
+        projectCodeList.push(projectCode);
+        projectTypeList.push(type);
+    
+        // Simpan data yang telah diperbarui kembali ke Firestore
+        await setDoc(docRefUser, {
+          projectNameList,
+          projectCodeList,
+          projectTypeList})
+      } else {
+        const projectNameList=[inputValue];
+        const projectCodeList=[projectCode];
+        const projectTypeList=[type];
+        await setDoc(docRefUser, { projectNameList, projectCodeList, projectTypeList });
+      }
       if(type==='HPP'){
-        await setDoc(docRef, { tanggal, namaKebutuhan, besarKebutuhan });
+        await setDoc(docRefProject, { namaBahan, jumlahBahan, satuanBahan, hargaBahan });
       }else{
-        await setDoc(docRef, { namaBahan, jumlahBahan, satuanBahan, hargaBahan });
+        await setDoc(docRefProject, { tanggal, namaKebutuhan, besarKebutuhan });
       }
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -65,9 +127,9 @@ export default function ProjectPage() {
   const handleSubmit = () => {
     // Handle submit logic here
     // console.log('Submitted with input:', inputValue);
-    addData()
-    setProjectName(inputValue)
-    type=='HPP'?navigation.replace('catatan_keuangan'):navigation.replace('hitung_hpp')
+    jOrN=='new'?newProjectFunction():joinProjectFunction()
+    
+    type=='HPP'?navigation.replace('hitung_hpp'):navigation.replace('catatan_keuangan')
   };
 
   useFocusEffect(

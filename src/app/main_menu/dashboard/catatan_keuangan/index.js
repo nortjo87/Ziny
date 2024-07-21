@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button,ScrollView } from 'react-native';
+import { View, Text, TextInput, Button,ScrollView ,BackHandler} from 'react-native';
 import { DataTable, IconButton, Modal, Portal, Provider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { format, parse, isValid, compareAsc } from 'date-fns';
@@ -8,9 +8,11 @@ import useGlobalStore from '../../../../config/store/global';
 import PieChart from 'react-native-pie-chart'
 import {BarChart} from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { useNavigation ,useFocusEffect } from '@react-navigation/native';
 
 
 export default function CatatanKeuangan() {
+  const navigation=useNavigation()
   const [tanggal, setTanggal] = useState([]);
   const [namaKebutuhan, setNamaKebutuhan] = useState([]);
   const [besarKebutuhan, setBesarKebutuhan] = useState([]);
@@ -26,12 +28,28 @@ export default function CatatanKeuangan() {
     bulan: format(today, 'MM'), 
     tahun: format(today, 'yyyy') 
   });
-  const { projectCode } = useGlobalStore();
+  const { projectCode,setJOrN,setProjectCode } = useGlobalStore();
 
   // Tambahkan state untuk pemasukanAll dan pengeluaranAll
   const [pemasukanAll, setPemasukanAll] = useState(0);
   const [pengeluaranAll, setPengeluaranAll] = useState(0);
   const [saldoAll,setSaldoAll]=useState(0);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        navigation.replace('main_menu');
+        setJOrN('')
+        setProjectCode('')
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
 
   const chartConfig = {
     backgroundGradientFrom: "white",
@@ -69,6 +87,7 @@ export default function CatatanKeuangan() {
 
   useEffect(() => {
     const updatedData = convertData();
+    console.log(updatedData)
     setData(updatedData);
     calculateIncomeAndExpenses(updatedData);
   }, [tanggal, namaKebutuhan, besarKebutuhan]);
@@ -125,14 +144,24 @@ export default function CatatanKeuangan() {
             }
         }
     });
-    setDataBarChartPemasukan(prev => ({
-      ...prev,
-      datasets: [{ data: incomeData }]
-    }));
-    setDataBarChartPengeluaran(prev => ({
-      ...prev,
-      datasets: [{ data: expenseData }]
-    }));
+    console.log(incomeData)
+    console.log(expenseData)
+    // const a=expenseData[6]
+
+    if (!incomeData.some(isNaN) && !expenseData.some(isNaN)) {
+      setDataBarChartPemasukan(prev => ({
+        ...prev,
+        datasets: [{ data:incomeData }]
+      }));
+      setDataBarChartPengeluaran(prev => ({
+        ...prev,
+        datasets: [{ data: expenseData }]
+      }));
+    } else {
+      console.log("Function did not run because one or both arrays contain NaN value.");
+    }
+
+    
 
   };
 
@@ -232,6 +261,7 @@ export default function CatatanKeuangan() {
     setVisibleModal(false);
 
     const updatedData = convertData();
+    console.log(updatedData)
     setData(updatedData);
     calculateIncomeAndExpenses(updatedData);
 
@@ -256,9 +286,6 @@ export default function CatatanKeuangan() {
         setNamaKebutuhan(docSnap.data().namaKebutuhan);
         setBesarKebutuhan(docSnap.data().besarKebutuhan);
 
-        const updatedData = convertData();
-        setData(updatedData);
-        calculateIncomeAndExpenses(updatedData);
       } else {
         console.log('No such document!');
       }
