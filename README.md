@@ -1,0 +1,1 @@
+Ziny is financial records application and cost of goods sold calculator, This application is made with react native, react native paper, nativewind, firebase and zustand. In this application, users can calculate HPP and financial records. The CRUD data system has been implemented in this application so that users can edit their own data, and share projects with other users.
